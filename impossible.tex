@@ -1,0 +1,561 @@
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+%                                                                              %
+% Copyright (C) 2006-2014 Cassio Neri Moreira                                  %
+%                                                                              %
+% This work is licensed under a Creative Commons Attribution-ShareAlike 4.0    %
+% International License.                                                       %
+% http://creativecommons.org/licenses/by-sa/4.0/                               %
+%                                                                              %
+% First appeared in Portuguese:                                                %
+% Cassio Neri, "O Problema Impossivel", Eureka!, 23, p 32--39, 2006.           %
+% http://www.obm.org.br/opencms/revista_eureka/                                %
+%                                                                              %
+% The most updated version can be found at                                     %
+% http://github.com/cassioneri/Impossible                                      %
+%                                                                              %
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
+\documentclass[a4paper]{article}
+
+\usepackage{amsmath, amsfonts, amssymb}
+\usepackage[colorlinks=true,dvips]{hyperref}
+
+\setlength{\hoffset}{0pt}
+\setlength{\voffset}{0pt}
+\setlength{\marginparsep}{0pt}
+\setlength{\marginparwidth}{0pt}
+\setlength{\evensidemargin}{0pt}
+\setlength{\oddsidemargin}{0pt}
+\setlength{\topmargin}{0pt}
+\setlength{\textwidth}{\paperwidth}
+\addtolength{\textwidth}{-2in}
+\setlength{\textheight}{\paperheight}
+\addtolength{\textheight}{-2in}
+\addtolength{\textheight}{-\footskip}
+\addtolength{\textheight}{-\headheight}
+\addtolength{\textheight}{-\headsep}
+
+\parskip.5\baselineskip
+
+\title{The Impossible Problem\footnote{%
+  First appeared in Portuguese: Cassio Neri, \href{http://www.obm.org.br/export/sites/default/revista_eureka/docs/eureka23.pdf}
+  {``O Problema Impossivel''},
+  \href{http://www.obm.org.br/opencms/revista_eureka/}{Eureka!}, 23, p32--39,
+  2006.
+  \newline
+  Latest version available at
+  \href{http://github.com/cassioneri/Impossible}
+  {github.com/cassioneri/Impossible}.
+  \newline
+  This work is licensed under a
+  \href{http://creativecommons.org/licenses/by-sa/4.0/}
+  {Creative Commons Attribution-ShareAlike 4.0 International License}.
+}}
+\author{Cassio Neri}
+\date{12 May 2014}
+
+\begin{document}
+
+\maketitle
+
+%\begin{abstract}
+%\end{abstract}
+
+\maketitle
+
+\section{Introduction}
+
+\indent\vspace{-\baselineskip}
+
+The Impossible Problem is a very beautiful problem about integer numbers. Its
+original form was given by Freudenthal \cite{Freudenthal} before being
+popularized by Martin Gardner \cite{Gardner}. The two problems are not exactly
+the same. Gardner's version is as follows:
+
+\begin{quotation}
+Two numbers (not necessarily different) are chosen from the range of positive
+integers greater than 1 and not greater than 20. Only the sum of the two numbers
+is given to mathematician S. Only the product of the two is given to
+mathematician P.
+
+On the telephone S says to P, ``I see no way you can determine my sum.'' An hour
+later P calls him back to say, ``I know your sum.'' Later S calls P again to
+report, ``Now I know your product.''\\
+What are the two numbers?
+\end{quotation}
+
+In the original problem Freudenthal gave an upper bound of $100$ (not for the
+numbers but for their sum). To simplify the problem, Gardner gave the bound of
+$20$. Doing that, ``the impossible problem turned out to be literally
+impossible'' as said by Gardner himself \cite{Gardner2}. In this text we will
+explain this point.
+
+It's surprising that the original problem is well posed since one can think that
+the little conversation has no relevant information about the numbers. But as we
+shall see, this conversation is plenty of mathematical information.
+
+The Impossible Problem is a $3$-in-$1$ problem. The problems for P and S differ
+and none of them is the same as ours. Both P and S have additional information
+(the product for P and the sum for S) that we don't. This makes a big
+difference.
+
+Section \ref{sec:Computer} shows how the problem can be solved with a computer's
+help. Section \ref{sec:Mistake} explains why although the numbers are within
+the range $[2, 20]$, if we set $N = 20$ then the solution no longer holds.
+Section \ref{sec:PS} shows how P and S can solve their problems with no need of
+a computer. Finally, Section \ref{sec:Hand} shows that we can also find the
+solution without a computer.
+
+
+\section{Solving the problem}
+\label{sec:Computer}
+
+\indent\vspace{-\baselineskip}
+
+To solve the problem we shall use a computer program since there are too many
+cases to consider. A code in C language, available on \cite{Code}, gives the
+answer. Later, we shall see another solution that do not require computer
+assistance.
+
+Now we explain the method of solution. Roughly speaking, we begin with two
+large sets: the set of all possible products and the set of all possible sums.
+From each sentence of the conversation we extract information that reduces the
+sizes of these sets. At the end, we have only one possible pair of product and
+sum. By solving a second degree polynomial equation, we determine the numbers.
+
+We assume the following fundamental hypothesis, otherwise the problem has no
+mathematical meaning.
+
+\noindent{\bf Fundamental Hypothesis}: P and S are telling the truth.
+
+This hypothesis deserves a philosophical comment. A reader might think that such
+hypothesis doesn't hold since S said that P couldn't find the sum and, an hour
+later, P annouced that she did. Is anyone lying? Not necessarily. The hypothesis
+is still plausible when time is considered. Initially, P couldn't solve the
+problem. For some reason, that we shall see below, S knew that and told P. After
+thinking, P figured out the reason why S was so sure. Only after that (hence,
+not before S has spoken) P could determine the sum.
+
+Let $p$ be the product and $s$ the sum of the two numbers. Let $N$ be the given
+upper bound. In this section $N = 100$. We know {\it a priori} that $p$ is not
+prime because it's a product of two integers greater than one. In addition, $p$
+cannot have any prime divisor bigger than $N$ (for instance, $p$ cannot be
+$2\cdot 101$). There are other restrictions, for instance, $p\ne 11\cdot 11\cdot
+11$ and $p\ne 11\cdot 13\cdot 17$. Notice that we know a lot about $p$. On the
+other hand, we have no restriction on $s$.
+
+To simplify the presentation, we make the following definitions.
+
+\noindent{\bf Definition}: Given an integer $m\ge 4$, we say that the pair
+$(i,j)$ is a {\em factorization} of $m$ if $m=ij$ with $i$ and $j$ integers
+in $[2, N]$.
+
+\noindent{\bf Definition}: Given an integer $m\ge 4$, we say that the pair
+$(i,j)$ is a {\em decomposition} of $m$ if $m=i+j$ with $i$ and $j$ integers
+in $[2, N]$.
+
+Notice that these definitions depends on $N$. So $(2,8)$ is a factorization of
+$16$ if, and only if, $N\ge 8$. When refering to factorizations and
+decompositions we make the convention that $(i,j)=(j,i)$.
+
+The restrictions on $p$ seen above are consequences of the following fact: there
+exist at least one factorization of $p$. The sets of admissible products and 
+sums are given, respectively, by
+\begin{align*}
+P_0 & := \{ m \in\mathbb{N};\ 4\le m\le N^2 \text{ and $m$ has at least one
+factorization} \},\\
+S_0 & := \{ m \in\mathbb{N};\ 4\le m\le 2N \}.
+\end{align*}
+
+The program tels us that $P_0$ has $2880$ elements. It tels also that $S_0$ has
+$197$ elements but this is trivially obtained with no need of a computer.
+
+We now analyse the dialogue. First S says that P cannot determine the sum. This
+means that $p$ has at least two distinct factorizations. Indeed, we already know
+that $p$ has a factorization. If $(i, j)$ was the only one, then $P$ would know
+that $s = i + j$. Hence, the set of possible products reduces to 
+\[
+P_1 := \{ m \in P_0\ ;\ m \text{ has at least two factorizations}\}.
+\]
+We have $p\in P_1$ and, accordingly to the program, $P_1$ has $1087$ elements.
+One can easily see that if $i$ and $j$ are primes and $i,j\le N$, then $ij\in
+P_0\setminus P_1$. However, numbers of this form constitute just a small part of
+$P_0\setminus P_1$. Other examples of numbers in $P_0\setminus P_1$
+are $N^2$ and $N(N-1)$.
+
+There is another consequence of S's first sentence: for every decomposition $(i,
+j)$ of $s$ we have $ij\in P_1$. Indeed, suppose that $s$ has a decomposition
+$(i, j)$ such that $ij\notin P_1$, that is, $(i, j)$ is the unique factorization
+of $ij$. At this stage, S couldn't deny the possibility of $p$ being $ij$ and,
+if this was the case, then P would know that the numbers were $i$ and $j$. Hence
+S wouldn't be sure that P was unable to find the sum. Therefore, the set
+of admissible sums reduces to
+\[
+S_1 := \{ m \in S_0\ ; \text{ for each decomposition } (i,j) \text { of $m$ we 
+have } ij\in P_1 \}.
+\]
+We have $s\in S_1$ and, accordingly to the program,
+\[
+S_1=\{11, 17, 23, 27, 29, 35, 37, 41, 47, 53\}.
+\]
+
+Next P says that she knows the sum. It follows that there exists a unique
+factorization $(i, j)$ of $p$ such that $i + j\in S_1$. Indeed,
+since $s\in S_1$, $p$ has a factorization (the one we are trying to find) whose
+sum is in $S_1$. If there was another such factorization, then P could not know
+which one was correct. Now, the set of admissible products reduces to
+\[
+P_2 := \{ m \in P_1\ ; \text{ there exists a unique factorization } (i,j)
+\text{ of } m \text { with } i + j\in S_1 \}.
+\]
+We have $p\in P_2$. The computer program shows that this set has $86$ elements.
+
+Finally, S clais that she knows the product. By an argument analougous to that of
+the last paragraph, we conclude that there exists a unique decomposition
+$(i, j)$ of $s$ such that $ij\in P_2$. Therefore, the set of admissible sums
+shrinks to
+\[
+S_2 := \{ m \in S_1\ | \text{ there exists a unique decomposition } (i, j)
+\text{ of } m \text{ with } ij\in P_2 \}.
+\]
+We have $s\in S_2$ and the program tells us that $S_2=\{17\}$, that is, $s=17$.
+
+At this point S has announced having found the product. Since S is telling the
+truth, we can find it too. Indeed, now we know that the sum is $17$. So we can
+put ourselves in S's shoes. Another way to find the solution is reiterating the
+step which gives $P_2$ from $S_1$ to construct $P_n$ from $S_{n-1}$ and that
+which gives $S_2$ from $P_2$ to construct $S_n$ from $P_n$. We repeat until we
+find $n\in \mathbb{N}$ such that the sets $P_n$ and $S_n$ are singletons. More
+precisely, for $n\ge3$, we set
+\begin{align*}
+P_n &:= \{ m \in P_{n-1}\ | \text{ there exists a unique factorization } (i, j)
+\text{ of } m \text{ with } i + j\in S_{n-1} \}. \\
+S_n &:= \{ m \in S_{n-1}\ | \text{ there exists a unique decomposition } (i, j)
+\text{ of } m \text{ with } ij\in P_n \}.
+\end{align*}
+We obtain $P_3=\{52\}$ and $S_3=\{17\}$, hence $p = 52$ and $s = 17$ and then
+the numbers are $4$ and $13$.
+
+\section{Gardner's mistake}
+\label{sec:Mistake}
+
+\indent\vspace{-\baselineskip}
+
+Knowing the answer $4$ and $13$, intuition would say that the same solution
+holds if we change, as Gardner did, the upper bound $N$ from $100$ to $20$.
+Funilly enough, this is wrong! We shall see that for $N\le 61$ the numbers
+$4$ and $13$ do not solve the problem! 
+
+What happens if $N\le 61$? In this case $17\notin S_2$. In fact, the computer
+program shows that $S_2=\varnothing$ which means the problem has no solution.
+One can argue that this might be a default of the program and the solution
+$4$ and $13$ can still hold. However, let us look at the mathematical argument
+again. It's as follows:
+\begin{enumerate}
+\item Before the dialogue : $p\in P_0$ e $s\in S_0$;
+\item After S's first sentence: $p\in P_1$ e $s\in S_1$;
+\item After P's first sentence: $p\in P_2$;
+\item After S's second sentence: $s\in S_2$.
+\end{enumerate}
+
+Therefore, if the numbers are $4$ and $13$, then $p = 52\in P_2\subset P_1
+\subset P_0$ and $s = 17\in S_2\subset S_1\subset S_0$. Suppose now that $N\le
+61$. We shall prove that $52\notin P_2$ or $17\notin S_2$ and it will follow
+that the numbers cannot be $4$ and $13$. We proceed by contradiction assuming
+that $52\in P_2$ and $17\in S_2$.
+
+We claim that $19$, $37\notin S_1$. Indeed, since $34$ has at most one
+factorization (which is $(2,17)$) we have $34\notin P_1$ and thus $19 = 2 + 17
+\notin S_1$. Notice that $186$ can be written as a product of two natural
+numbers only in the following ways: $1\cdot 186$, $2\cdot 93$, $3\cdot 62$ and
+$6\cdot 31$. Since $N\le 61$ at most the last form is a factorization of $186$
+and thus $186\notin P_1$. It follows that $37 = 6 + 31\notin S_1$.
+
+Now, let us show that $70\in P_2$. We can write $70$ as $1\cdot 70$,
+$2\cdot 35$, $5\cdot 14$ and $7\cdot 10$. As we have seen $37 = 2 + 35$ and
+$19 = 5 + 14$ are not in $S_1$ but $17\in S_1$. Hence $70\in P_2$.
+
+Finalmente, entre todas as decomposições de $17$ temos $(4,13)$ e $(7,10)$. Como
+$52,70\in P_2$ temos que $17\notin S_2$ o que é uma contradição.
+
+Finally, among all decompositions of $17$ we have $(4, 13)$ and $(7, 10)$. Since
+$52$, $70\in P_2$ we have $17\notin S_2$, which is a contradiction.
+
+I emphasize the following facts:
+\begin{enumerate}
+
+\item We have shown only that $(4, 13)$ is no longer a solution. Pehaps another
+solution arises for $N\le 61$. But the program in \cite{Code} shows that,
+in fact, $S_2 = \varnothing$ and thus the problem has no solution.
+
+\item Even ther purists who don't accept computer assisted proofs should accept
+that $(4, 13)$ is not a solution for $N\le 61$.
+
+\item When I say the problem has no solution, I mean {\em our} problem has no
+solution. On the other hand, the problem given to P have solution provided she
+has good data. The situation for S is not very different from ours. We shall see
+more details in the next section.
+\end{enumerate}
+
+\section{Problem for P and S}
+\label{sec:PS}
+
+\indent\vspace{-\baselineskip}
+
+In this section we consider the other problems, specially, the one given to P.
+In \cite{Code} we give a code in C language that could be used by P (or by you
+in his place) and also a code for S. For the time being, we go back to assuming
+that $N = 100$.
+
+Despite the use of a computer to assist our solution, P and S don't need a great
+computational ability to find the answer. A great memory (specially for S) or at
+most a pencil and a piece of paper are enough for them.
+
+P knows that $p = 52$ and its factorizations are $(2, 26)$ and $(4, 13)$. Thus
+she knows that $s$ is either $28$ or $17$. After S talks for the first time, P
+find the decompositions of $28$: $(2, 26)$, $(3, 25)$, $(4, 24)$, $(5, 23)$, ...
+She can stop at $(5, 23)$ and conclude that $s\ne 28$ because $(5, 23)$ is the
+unique factorization of $115$ ($5$ and $23$ are primes) and thus $115\notin
+P_1$. She can now seek the decompositions of $17$ (just to be sure that $s =
+17$): $(2, 15)$, $(3, 14)$, $(4, 13)$, $(5, 12)$, $(6, 11)$, $(7, 10)$ and $(8,
+9)$. These pairs are factorizations of, respectively, $30$, $42$, $52$, $60$,
+$66$, $70$ and, $72$. All these numbers are in $P_1$ since each of them has
+another factorization which differ from the one shown here. Now P can conclude
+that the sum of numbers are $17$ and thus she is able to find the two numbers.
+
+S must work more than P. Nevertheless, she is also able to find the product
+after some minutes%
+%
+\footnote{Playing the role of S, I found the product in about 15 minutes. To
+simplify my task, in my computations I set $P_0\setminus P_1$ to have only
+numbers which are product of two primes.}.
+%
+
+Now we consider other values of $N$. As we have seen, for smal values we cannot
+solve the problem. Analogously, for $N$ large, {\em e.g.} $N = 866$, we are not
+able to find the numbers since because $P_n = \{52, 244\}$ and $S_n=\{17,65\}$
+for all $n\ge 3$. The effect of changing $N$ for P is almost null: knowing that
+$p = 52$ she finds the solution $(4, 13)$ for all values of $N\ge 13$ (which
+agrees with intuiton). Even the ambiguity that we have for $N = 866$ disappears.
+In this case, had P been given $p = 244$ then she would find the solution
+$(4, 61)$.
+
+When $N\le 25$, $(2, 26)$ is no longer a factorization of $52$. In this case, P
+would have no doubt that the $s = 17$. Hence S wouldn't say that P cannot
+determine the sum. P could find $s$ but S wouldn't find $p$ as we shall see
+below.
+
+For $N\le 61$, S's situation is similar to ours: she cannot find $p$. The reason
+is the same as before: $(4, 13)$ and $(7, 10)$ are two decompositions of $17$
+with products in $P_2$. Another way to see this fact is the following. Let
+$N = 61$ and put yourself in P's shoes, first, with $p = 52$ and, second, with
+$p = 70$. In both cases, after S's first sentence, you would find $s = 17$.
+Hence S couldn't decide whether $p = 52$ or $p = 70$. In fact there is a third
+possibility for $N = 61$, namely, $p = 66$. For $N = 866$, S find the $p = 52$,
+when $s = 17$, or $p = 244$, when $s=65$.
+
+\section{Solving without a computer}
+\label{sec:Hand}
+
+\indent\vspace{-\baselineskip}
+
+Let us see now another way to solve the original problem, where $N = 100$, that
+doesn't need computer assistence.
+
+Finding $P_0$ or $P_1$ manually would be very laborous (recall that, according
+to the program, these sets have, respectively, $2880$ and $1087$ elements). Let
+us find $S_1$ with no computer but a bit of patience.
+
+To prove that $m\notin S_1$ it suffices to find a decomposition $(i, j)$ of $m$
+which is the unique factorization of $ij$. Let's see some cases (whose
+verification is left to the reader). For $m = 200$ we have the decomposition
+$(100, 100)$. For $m = 199$ and $m = 198$ we have $(99, 100)$ and $(99, 99)$,
+respectively.
+
+For $99\le m\le 197$ we have $2\le m - 97\le 100$. Then $(i, j) = (97, m - 97)$
+is a decomposition of $m$. Now, $97$ is a prime factor of $ij = 97(m - 97)$ and
+then, either $i$ or $j$ is divisible by $97$. Assume, without loss of
+generality, that $i$ is divisible by $97$. In this case, we must have $i = 97$
+because, otherwise, $i$ has another factor and then $i\ge 2\cdot97>100$ which is
+absurd. Hence $(97, m - 97)$ is the unique factorization of $97(m - 97)$. In the
+same way, one can show that if $55\le m\le 153$, then $(53, m - 53)$ is the
+unique factorization of $53(m - 53)$.
+
+In summary, we have shown that if $m\in S_1$, then $m < 55$.
+
+If $m\le 54$ is even, then one can verify, case-by-case, that $m$ has a
+decomposition $(i, j)$ with $i$ and $j$ primes%
+%
+\footnote{The general case, {\em i.e}, with no upper bound for $m$, is an open
+problem known as the Goldbach's conjecture \cite{Wikipedia}.}%
+%
+. Such decomposition is the unique factorization of $ij$. Analogously, for $m\in
+\{5, 7, 9, 13, 15, 19, 21,$ $25, 31, 33, 39, 43, 45\}$, the decomposition $(i, j)=
+(2, m - 2)$ has both $i$ and $j$ primes, meaning this is the only factorization
+of $2(m-2)$. Finally, $(17, 34)$ is a decomposition of $51$ which is the unique
+factorization of $17\cdot 34 = 2\cdot 17^2$ (since $17^2>100$).
+
+It follows that $S_1\subset\tilde S_1 := \{11, 17, 23, 27, 29, 35, 37, 41, 47,
+53\}$. Now, we shall prove the opposite inclusion to conclude that $S_1 = \tilde
+S_1$. For this, we need to prove that for all $m\in\tilde S_1$ and every
+decomposition $(i, j)$ of $m$ there exists a distinct factorization of $ij$.
+
+Let $m\in\tilde S_1$ and $(i, j)$ be a decomposition of $m$. Since $m$ is odd,
+either $i$ of $j$ is even. Without loss of generality, we assume $i$ is even.
+We consider first the case $i \ge 4$ and then the case $i = 2$.
+
+If $i\ge 4$, then $j = m - i \le m - 4\le 53 - 4 < 50$ and we obtain $2j < 100$.
+Hence, $(i/2, 2j)$ is a factorization of $ij$ which distinct from $(i, j)$
+unless $i = 2j$ and $m = 3j$. The unique multiple of $3$ in $\tilde S_1$ is $27$
+for which the decomposition in question is $(18, 9)$ but its product also admits
+the factorization $(6, 27)$.
+
+If $i = 2$, then we have to present a factorization of $2(m - 2)$ distinct from
+$(2, m - 2)$, which is done in Table \ref{tab:S1}.
+
+\begin{table}[ht]
+\center
+\begin{tabular}{cccc}
+\hline
+$m$  & $(2, m - 2)$ & $2(m - 2)$ & Distinct decomposition \\
+\hline
+$11$ & $(2, 9)$     & $18$       & $(3, 6)$ \\
+$17$ & $(2, 15)$    & $30$       & $(3, 10)$ \\
+$23$ & $(2, 21)$    & $42$       & $(3, 14)$ \\
+$27$ & $(2, 25)$    & $50$       & $(5, 10)$ \\
+$29$ & $(2, 27)$    & $54$       & $(3, 18)$ \\
+$35$ & $(2, 33)$    & $66$       & $(3, 22)$ \\
+$37$ & $(2, 35)$    & $70$       & $(5, 14)$ \\
+$41$ & $(2, 39)$    & $78$       & $(3, 26)$ \\
+$47$ & $(2, 45)$    & $90$       & $(3, 30)$ \\
+$53$ & $(2, 51)$    & $102$      & $(3, 34)$ \\
+\hline
+\end{tabular}
+\caption{Completing the proof that $\tilde S_1\subset S_1$.}
+\label{tab:S1}
+\end{table}
+
+Finding $P_2$ would also be very labourous and we go directly to $S_2$. By
+definition $m\in S_2$ if there exists a unique decomposition $(i, j)$ of $m$
+which is also the unique factorization of $ij$ whose sum belongs to $S_1$.
+Hence, to conclude that $m\in S_1\setminus S_2$ it suffices to find two
+distinct decompositions of $m$ that are the unique factorizations of their
+product having sum in $S_1$. This is done for all $m\in S_1\setminus\{17\}$ in
+Table \ref{tab:S2}. It follows that $S_1\setminus\{17\}\subset S_1\setminus S_2$
+or, in other words, $S_2\subset\{17\}$. Since $s\in S_2$ we have $S_2=\{17\}$
+and $s = 17$.
+
+\begin{table}[ht]
+\center
+\footnotesize
+\begin{tabular}{c|cccc|cccc}
+\hline
+$m$  & 1$^{st}$ decomp. & Product & Other fact(s).
+     & Sum(s)
+     & 2$^{nd}$ decomp. & Product & Other fact(s).
+     & Sum(s) \\
+\hline
+$11$ & $(2, 9)$         & $18$    & $(3, 6)$    
+     & $9$
+     & $(4, 7)$         & $28$    & $(2, 14)$
+     & $16$ \\
+$23$ & $(4, 19)$        & $76$    & $(2, 38)$
+     & $40$
+     & $(10, 13)$       & $130$   & $(2, 65)$, $(5, 26)$
+     & $67$, $31$ \\
+$27$ & $(2, 25)$        & $50$    & $(5, 10)$
+     & $15$
+     & $(4, 23)$        & $92$    & $(2, 46)$
+     & $48$ \\
+$29$ & $(4, 25)$        & $100$   & $(2, 50)$, $(5, 20)$
+     & $52$, $25$
+     & $(6, 23)$        & $138$   & $(2, 69)$, $(3, 46)$
+     & $71$, $49$ \\
+$35$ & $(4, 31)$        & $124$   & $(2, 62)$
+     & $64$
+     & $(6, 29)$        & $174$   & $(2, 87)$, $(3, 58)$
+     & $89$, $61$ \\    
+$37$ & $(6, 31)$        & $186$   & $(2, 93)$, $(3, 62)$
+     & $95$, $65$
+     & $(8, 29)$        & $232$   & $(4, 58)$
+     & $62$ \\
+$41$ & $(6, 35)$        & $210$   & $(3, 70)$
+     & $73$
+     & $(7, 34)$        & $238$   & $(14, 17)$
+     & $31$ \\
+$47$ & $(4, 43)$        & $172$   & $(2, 86)$
+     & $88$
+     & $(6, 41)$        & $246$   & $(3, 82)$
+     & $85$ \\
+$53$ & $(4, 49)$        & $196$   & $(2, 98)$
+     & $100$
+     & $(10, 43)$       & $430$   & $(5, 86)$
+     & $91$ \\
+\hline
+\end{tabular}
+\caption{The proof that $S_2\subset\{17\}$. Notice that no number in either
+{\em Sum(s)}' columns are in $S_1$.}
+\label{tab:S2}
+\end{table}
+
+We know that $p = ij$ for some decomposition $(i, j)$ of $17$. In addition, $p
+\in P_2$, that is, $(i, j)$ is the unique factorization of $p$ whose sum is in
+$S_1$. We shall show now that $(4, 13)$ is the only decomposition of $17$ with
+this property and it will follow that the numbers are $4$ and $13$.
+
+Indeed $52$ has only two factorizations $(2, 26)$, $(4, 13)$ but only the latter
+has the sum in $S_1$. It remains to prove that every other decomposition
+$(i, j)$ of $17$ has a product that admits a factorization distinct from
+$(i, j)$ with sum in $S_1$. This is done in Table \ref{tab:17}.
+
+\begin{table}[ht]
+\center
+\begin{tabular}{cccc}
+\hline
+Decomposition  & Product & Factorization & Sum \\
+\hline
+$(2, 15)$      & $30$    & $(5, 6)$  & $11$ \\
+$(3, 14)$      & $42$    & $(2, 21)$ & $23$ \\
+$(5, 12)$      & $60$    & $(3, 20)$ & $23$ \\
+$(6, 11)$      & $66$    & $(2, 33)$ & $35$ \\
+$(7, 10)$      & $70$    & $(2, 35)$ & $37$ \\
+$(8, 9)$       & $72$    & $(3,24)$  & $27$ \\
+\hline
+\end{tabular}
+\caption{Any decomposition of $17$ but $(4, 13)$ have a product that doesn't
+belong to $P_2$.}
+\label{tab:17}
+\end{table}
+
+\begin{thebibliography}{00}
+
+\bibitem{Freudenthal}
+{\sc Hans Freudenthal,}
+Nieuw Archief Voor Wiskunde, Ser 3, 17 (1969) 152.
+
+\bibitem{Gardner}
+{\sc Martin Gardner,}
+Mathematical Games, Scientific American, 241 (Dec. 1979) 22.
+
+\bibitem{Gardner2}
+{\sc Martin Gardner,}
+Mathematical Games, Scientific American, 242 (May 1980).
+
+\bibitem{Wikipedia}
+{\sc Wikepedia,}
+{\em Goldbach's conjecture}, \url{http://en.wikipedia.org/wiki/Goldbach\%27s_conjecture}.
+
+\bibitem{Sallows}
+{\sc Lee Sallows,}
+The Impossible Problem, The Mathematical Intelligencer, 17:1 (1995) 27.
+
+\item{Isaacs}
+{\sc I.M. Isaacs,}
+The Impossible Problem Revisited Again, The Mathematical Intelligencer, 17:4
+(1995) 4.
+
+\bibitem{Code} URL: \verb+www.labma.ufrj.br/~cassio/f-impossible.html+
+
+\end{thebibliography}
+
+\end{document}
