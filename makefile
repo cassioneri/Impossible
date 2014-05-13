@@ -1,14 +1,30 @@
-# Makefile para automatizar a compilacao de meus documentos TeX/LaTeX
+TITLE  = impossible
+FILES  = impossible.tex 
 
-# Colocar aqui o nome (base) dos arquivos 
-TITLE = impossible
-FILES = impossible.tex 
+PROG   = latex
 
-# Escolher entre TeX e LaTeX
-PROG=latex
+CC     = gcc
+CFLAGS = -O2 -I. -Wall -Wextra -pedantic
 
-# Nao alterar a linha abaixo
-INDEX=0
+DEPS   = common.h
+OBJ    = common.o impossible.o p.o s.o
+
+all: pdf impossible p s
+
+%.o: %.c $(DEPS)
+	$(CC) -c -o $@ $< $(CFLAGS)
+
+impossible: impossible.o common.o
+	gcc -o $@ $^ $(CFLAGS) -lm
+
+p: p.o common.o
+	gcc -o $@ $^ $(CFLAGS) -lm
+
+s: s.o common.o
+	gcc -o $@ $^ $(CFLAGS) -lm
+
+# Do not change this
+INDEX  = 0
 
 ${TITLE}.dvi dvi: ${TITLE}.tex ${FILES}
 	{ ${PROG} ${TITLE}.tex ; \
@@ -50,7 +66,7 @@ noindex:
 	sed -e 's/^INDEX=1/INDEX=0/g' -i makefile
 
 clean:
-	rm -f ${TITLE}.aux ${TITLE}.bbl ${TITLE}.blg ${TITLE}.fot ${TITLE}.idx ${TITLE}.ilg ${TITLE}.ind ${TITLE}.log ${TITLE}.lof ${TITLE}.toc
+	rm -f ${TITLE}.aux ${TITLE}.bbl ${TITLE}.blg ${TITLE}.fot ${TITLE}.idx ${TITLE}.ilg ${TITLE}.ind ${TITLE}.log ${TITLE}.lof ${TITLE}.toc *.o
 
 cleanall: clean
-	rm -f ${TITLE}.dvi ${TITLE}.ps ${TITLE}.pdf
+	rm -f ${TITLE}.dvi ${TITLE}.ps ${TITLE}.pdf impossible p s
