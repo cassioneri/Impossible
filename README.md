@@ -23,7 +23,7 @@ What are the two numbers?"
 <p>
 This <a href="http://github.com/cassioneri/Impossible/blob/master/impossible.pdf">article</a>
 explains how this problem can be solved with computer assistence and also without
-it. (The code is also available at this site.) It also gives some suprising
+it. (The code is also available at this site.) It also gives some surprising
 results about what happens when the upper bound (20) is changed.
 </p>
 <p>
