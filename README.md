@@ -19,9 +19,10 @@ report, "Now I know your product."
 What are the two numbers?
 </quote>
 
-This article explain how this problem can be solved with computer assistence and
-also without it. (The code is available.) It also gives some suprising results
-about what happens when the bound (20) is changed.
+This [article](https://github.com/cassioneri/Impossible/blob/master/impossible.pdf)
+explains how this problem can be solved with computer assistence and also without
+it. (The code is also available at this site.) It also gives some suprising
+results about what happens when the upper bound (20) is changed.
 
 [1] Hans Freudenthal, Nieuw Archief Voor Wiskunde, Ser 3, 17 (1969) 152.
 <br>
